@@ -73,8 +73,3 @@ spec:
           imagePullPolicy: IfNotPresent   
           ports: 
             - containerPort: 80     #容器对外开放的端口
-        - name: redis
-          image: redis:7.2.4
-          imagePullPolicy: IfNotPresent
-          ports:
-            - containerPort: 6379
