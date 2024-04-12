@@ -1,0 +1,75 @@
+# 创建名为dev的命名空间
+# 版本号
+apiVersion: v1    
+# 表明创建的种类为命名空间
+kind: Namespace      
+# 定义资源的元数据信息，比如资源的名称、namespace、标签等信息
+metadata: 
+  #定义命名空间的名称           
+  name: dev            
+  
+---
+# 创建 service （一组pod 对外访问的包装）
+# 版本号
+apiVersion: v1     
+# 表明创建资源的种类为service
+kind: Service         
+metadata: 
+  # 定义service的名称，在同一namespace中必须是唯一的
+  name: nginx-svc
+  # 定义资源属于哪一个命名空间  
+  namespace: dev      
+# 定义service所需要的参数属性
+spec:                  
+  ports:  
+  # 当type=Nodeport时，指定映射到物理机的端口  
+  - nodePort: 32036   
+    # 服务本身监听的端口
+    port: 80          
+    protocol: TCP
+    # 需要转发到后端的端口，nginx默认端口为80
+    targetPort: 80     
+  selector:
+    # 如何确定需要代理哪一个服务，通过标签，设置后会自动匹配同一命名空间下标签为nignx的pod代理
+    app: nginx  
+  # service的类型，指定service的访问方式，默认ClusterIP 
+  type: NodePort       
+  #ClusterIP：虚拟的服务ip地址，用于k8s集群内部的pod访问，在Node上kube-porxy通过设置的iptables规则进行转发
+  #NodePort：使用宿主机端口，能够访问各Node的外部客户端通过Node的IP和端口就能访问服务器
+  #LoadBalancer：使用外部负载均衡器完成到服务器的负载分发，
+  
+---
+# 版本号
+apiVersion: apps/v1 
+# 类型    
+kind: Deployment       
+metadata: 
+  # 名字
+  name: nginx 
+  # 属于的命名空间  
+  namespace: dev
+  labels: 
+    # 给自己打个标签
+    app: nginx         
+spec: 
+  # 副本数量，为2，稍后会创建两个pod
+  replicas: 3          
+  selector: 
+    matchLabels: 
+      # 这里设置将要匹配的标签
+      app: nginx        
+  template: 
+    metadata: 
+      labels: 
+        # 设置创建pod后将要给它打上的标签
+        app: nginx      
+    spec:
+      containers:
+        # 资源名，创建时会自动加后缀，防止名称重复
+        - name: nginx    
+          # 创建资源的镜像，这里选择的是之前上传到harbor仓库的镜像
+          image: nginx:1.25.4 
+          # 拉取策略，这里的意思是如果本地没有就从远程仓库拉取    
+          imagePullPolicy: IfNotPresent   
+          ports: 
+            - containerPort: 80     #容器对外开放的端口
