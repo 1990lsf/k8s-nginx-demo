@@ -33,7 +33,7 @@ spec:
     # 如何确定需要代理哪一个服务，通过标签，设置后会自动匹配同一命名空间下标签为nignx的pod代理
     app: nginx  
   # service的类型，指定service的访问方式，默认ClusterIP 
-  type: NodePort       
+  type: LoadBalancer       
   #ClusterIP：虚拟的服务ip地址，用于k8s集群内部的pod访问，在Node上kube-porxy通过设置的iptables规则进行转发
   #NodePort：使用宿主机端口，能够访问各Node的外部客户端通过Node的IP和端口就能访问服务器
   #LoadBalancer：使用外部负载均衡器完成到服务器的负载分发，
