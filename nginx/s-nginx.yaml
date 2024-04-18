@@ -37,11 +37,6 @@ spec:
   #ClusterIP：虚拟的服务ip地址，用于k8s集群内部的pod访问，在Node上kube-porxy通过设置的iptables规则进行转发
   #NodePort：使用宿主机端口，能够访问各Node的外部客户端通过Node的IP和端口就能访问服务器
   #LoadBalancer：使用外部负载均衡器完成到服务器的负载分发，
-status: 
-  loadBalancer: 
-    ingress:
-    - ip: 47.94.41.37
-    - ip: 47.95.157.6
     
   
 ---
